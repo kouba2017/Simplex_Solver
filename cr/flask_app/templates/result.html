@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Result tables</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Simplex Resolver</h1>
+        <div id="vars_decision" >
+            <table class="table table-light table-bordered"  >
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th > X</th>
+                        <th> Y</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Valeur</th>
+                        <td class="text-warning font-weight-bold" >{{res.x}}</td>
+                        <td class="text-warning font-weight-bold">{{res.y}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="Constraints_tab" >
+            <table class="table table-light table-bordered" >
+                <thead>
+                    <tr>
+                        <th>Contraintes</th>
+                        <th colspan="2" >Coefficients Techniques</th>
+                        <th>1er membre</th>
+                        <th>Type</th>
+                        <th>2ème Membre</th>
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Charge de travail</td>
+                        <td>{{data.a.x[0]}}</td>
+                        <td>{{data.a.y[0]}}</td>
+                        <td></td>
+                        <td>{{data.symb[0]}}</td>
+                        <td>{{data.b[0]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Qté poterie /émaux</td>
+                        <td>{{data.a.x[1]}}</td>
+                        <td>{{data.a.y[1]}}</td>
+                        <td></td>
+                        <td>{{data.symb[1]}}</td>
+                        <td>{{data.b[1]}}</td>
+                    </tr>
+                    <tr>
+                        <td>Qualité limite de Fabrication</td>
+                        <td>{{data.a.x[2]}}</td>
+                        <td>{{data.a.y[2]}}</td>
+                        <td></td>
+                        <td>{{data.symb[2]}}</td>
+                        <td>{{data.b[2]}}</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div id="fct_eco" >
+            <table class="table table-light table-bordered"  >
+                <thead>
+                    <tr>
+                        <th>Fonction économique</th>
+                        <th >Coef X</th>
+                        <th>Coef Y</th>
+                        <th >Z</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td>{{data.c[0]}}</td>
+                        <td>{{data.c[1]}}</td>
+                        <td>{{data.z}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

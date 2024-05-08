@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Show tables</title>
+</head>
+<body>
+    <div class="container">
+        <h1>Simplex Resolver</h1>
+        <form action="/solve" method="post" >
+        <div id="vars_decision" >
+            <table class="table table-light table-bordered"  >
+                <thead>
+                    <tr>
+                        <th>Nom</th>
+                        <th > X</th>
+                        <th> Y</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Valeur</th>
+                        <td class="text-warning font-weight-bold" ></td>
+                        <td class="text-warning font-weight-bold"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="Constraints_tab" >
+            <table class="table table-light table-bordered" >
+                <thead>
+                    <tr>
+                        <th>Contraintes</th>
+                        <th colspan="2" >Coefficients Techniques</th>
+                        <th>1er membre</th>
+                        <th>Type</th>
+                        <th>2ème Membre</th>
+                    </tr>
+                    
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Charge de travail</td>
+                        <td><input class="form-control" name="ax0" placeholder="ax0" /></td>
+                        <td><input class="form-control" name="ay0" placeholder="ay0" /></td>
+                        <td></td>
+                        <td><input class="form-control" name="symb0" placeholder="symbol 0" /></td>
+                        <td><input class="form-control" name="b0" placeholder="b 0" /></td>
+                    </tr>
+                    <tr>
+                        <td>Qté poterie /émaux</td>
+                        <td><input class="form-control" name="ax1" placeholder="ax1" /></td>
+                        <td><input class="form-control" name="ay1" placeholder="ay1" /></td>
+                        <td></td>
+                        <td><input class="form-control" name="symb1" placeholder="symbol 1" /></td>
+                        <td><input class="form-control" name="b1" placeholder="b 1" /></td>
+                    </tr>
+                    <tr>
+                        <td>Qualité limite de Fabrication</td>
+                        <td><input class="form-control" name="ax2" placeholder="ax2" /></td>
+                        <td><input class="form-control" name="ay2" placeholder="ay2" /></td>
+                        <td></td>
+                        <td><input class="form-control" name="symb2" placeholder="symbol 2" /></td>
+                        <td><input class="form-control" name="b2" placeholder="b 2" /></td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        <div id="fct_eco" >
+            <table class="table table-light table-bordered"  >
+                <thead>
+                    <tr>
+                        <th>Fonction économique</th>
+                        <th >Coef X</th>
+                        <th>Coef Y</th>
+                        <th >Z</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td><input class="form-control" name="c0" placeholder="Coeff X" /></td>
+                        <td><input class="form-control" name="c1" placeholder="Coeff Y" /></td>
+                        <td><input class="form-control" name="z" placeholder="Z" /></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <button class="btn btn-primary" type="submit" >Solve!!</button>
+        </div>
+    </form>
+
+    </div>
+</body>
+</html>

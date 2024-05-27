@@ -35,8 +35,8 @@ def simplex(c, A, b,z):
         solution[f'variable_decision_{i+1}'] = variables_decision[i]
     if(z=="max"):
       solution['valeur_objectif']=-solution['valeur_objectif']
-    
-    return solution
+    bf=premier_member(A,solution['tableau_simplexe'])
+    return solution,bf 
 
 def convert_standard_pl(c,A,b,z,op):
   c = np.array([c[0], c[1]])  # Coefficients de la fonction objectif
@@ -51,7 +51,17 @@ def convert_standard_pl(c,A,b,z,op):
             A[i, :] = -A[i, :]  # Inverser les coefficients des contraintes
             b[i] = -b[i]  # Inverser les valeurs des contraintes
   return A,b,c
+def premier_member(A, tableau):
+    m, n = A.shape
+    T = tableau[:-1, -1][::-1] 
+    T = [T[1],T[2]] 
+    bf = np.zeros(m)
+    print(T)
+    for i in range(m):
+        bf[i] = np.dot(A[i, :], T[:n])
+    return bf
 
+   
   
 # Exemple d'utilisation
 z = "min"
@@ -60,8 +70,9 @@ c = np.array([-2, -3])  # Coefficients de la fonction objectif
 A = np.array([[1,6], [-2,-2], [4,1]])  # Coefficients des contraintes
 b = np.array([30, -15, 24])  # Valeurs des contraintes
 A,b,c=convert_standard_pl(c,A,b,z,op)
-resultat = simplex(c, A, b,z)
+resultat,bf = simplex(c, A, b,z)
 print("Solution optimale:")
 print("Valeur de la fonction objectif:", resultat['valeur_objectif'])
 for i in range(2):
     print(f"Valeur de la variable de décision {i+1}: {resultat[f'variable_decision_{2-i}']}")
+print(bf)

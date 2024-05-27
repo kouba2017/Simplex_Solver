@@ -1,3 +1,68 @@
+
+
+
+from flask_app import app
+from flask import render_template,redirect,request,session
+
+app.secret_key="session_solver"
+
+@app.route("/")
+def index():
+    # data={
+    #     "a": {"x":[-1,1,1],"y":[4,-1,1]},
+    #     "b":[160,30,80],
+    #     "c":[20.00,60.00],
+    #     "z":3520.00,
+    #     "symb":["<=","<=","<="],
+    #     "res":{"x":32,"y":48}
+    # }
+    return render_template("index.html")
+
+@app.route("/solve", methods=["POST"])
+def solver():
+    data={
+        "a":{"x":[
+            request.form["ax0"],
+            request.form["ax1"],
+            request.form["ax2"]
+        ],
+        "y":[
+            request.form["ay0"],
+            request.form["ay1"],
+            request.form["ay2"]
+        ]},
+        "b":[
+            request.form["b0"],
+            request.form["b1"],
+            request.form["b2"]
+        ],
+        "c":[
+            request.form["c0"],
+            request.form["c1"]
+        ],
+        "symb":[
+            request.form["symb0"],
+            request.form["symb1"],
+            request.form["symb2"]
+        ]
+    }
+    # keep the data in the session so it will reappear with the routing
+    session["data"]=data
+    return redirect("/result")
+
+@app.route("/result")
+def result():
+    s,v=solve_it(session["data"])
+    res=[]
+    for variable, value in s:
+        print(f"x[{variable}] = {value}")
+        res.append(round(value))
+    
+    return render_template("result.html",data=session["data"],res=res,z=round(v))
+
+
+#Solving Simplex Algo
+
 import heapq
 
 
@@ -81,7 +146,7 @@ def objectiveValue(tableau):
    return -(tableau[-1][-1])
 
 
-def canImprove(tableau): 
+def canImprove(tableau):
    lastRow = tableau[-1]
    return any(x > 0 for x in lastRow[:-1])
 
@@ -149,40 +214,39 @@ def simplex(c, A, b):
 
 
 
-def collect_LP_from_user():
-   # Prompt the user to enter the number of variables and constraints
-   num_variables = int(input("Enter the number of variables: "))
-   num_constraints = int(input("Enter the number of constraints: "))
-
-   # Prompt the user to enter the coefficients of the objective function
-   print("Enter the coefficients of the objective function:")
-   c = [float(input(f"c[{i}]: ")) for i in range(num_variables)]
-
+def collect_LP_from_user(data):
+    # Prompt the user to enter the number of variables and constraints
+    num_constraints=3
+    
+    # Prompt the user to enter the coefficients of the objective function
+    print("Enter the coefficients of the objective function:")
+    c = [float(data["c"][i]) for i in range(1)]
+    
    # Prompt the user to enter the constraint matrix
-   print("Enter the constraint matrix A (one row at a time):")
-   A = [[float(input(f"A[{i}][{j}]: ")) for j in range(num_variables)] for i in range(num_constraints)]
+    print("Enter the constraint matrix A (one row at a time):")
+    A = [[float(data["a"][j][i]) for j in {"x","y"}] for i in range(2)]
 
    # Prompt the user to enter the right-hand side vector
-   print("Enter the right-hand side vector b:")
-   b = [float(input(f"b[{i}]: ")) for i in range(num_constraints)]
+    print("Enter the right-hand side vector b:")
+    b = [float(data["b"][i]) for i in range(2)]
 
-   return c, A, b,num_constraints
+    return c, A, b,num_constraints
 
-if __name__ == "__main__":
-   # Collect the linear program from the user
-   c, A, b ,num_constraints= collect_LP_from_user()
-
-   # add slack variables by hand
-   num_slack_variables = num_constraints
-   for row in A:
+def solve_it(data):
+    # Collect the linear program from the user
+    c, A, b ,num_constraints= collect_LP_from_user(data)
+    # add slack variables by hand
+    num_slack_variables = num_constraints
+    for row in A:
       row += [0] * num_slack_variables
       c += [0] * num_slack_variables
 
-   # Solve the linear program using the simplex algorithm
-   t, s, v = simplex(c, A, b)
-
-   # Print the primal solution and the value of the objective function
-   print("Primal Solution:")
-   for variable, value in s:
-      print(f"x[{variable}] = {value}")
-   print("Objective Value:", v)
+    # Solve the linear program using the simplex algorithm
+    t, s, v = simplex(c, A, b)
+    
+    # Print the primal solution and the value of the objective function
+    print("Primal Solution:")
+    for variable, value in s:
+        print(f"x[{variable}] = {value}")
+    print("Objective Value:", v)
+    return s,v

@@ -39,9 +39,9 @@ def simplex(c, A, b,z):
     return solution,bf 
 
 def convert_standard_pl(c,A,b,z,op):
-  c = np.array([c[0], c[1]])  # Coefficients de la fonction objectif
-  A = np.array([A[0], A[1], A[2]])  # Coefficients des contraintes
-  b = np.array([b[0],b[1],[2]]) 
+  c = np.array(c)  # Coefficients de la fonction objectif
+  A = np.array(A)  # Coefficients des contraintes
+  b = np.array(b) 
   if z == "max":
         return A, b, c
   else:
@@ -61,7 +61,7 @@ def premier_member(A, tableau):
         bf[i] = np.dot(A[i, :], T[:n])
     return bf
 
-   
+
   
 # Exemple d'utilisation
 z = "min"
@@ -74,5 +74,5 @@ resultat,bf = simplex(c, A, b,z)
 print("Solution optimale:")
 print("Valeur de la fonction objectif:", resultat['valeur_objectif'])
 for i in range(2):
-    print(f"Valeur de la variable de décision {i+1}: {resultat[f'variable_decision_{2-i}']}")
+    print(f"Valeur de la variable de decision {i+1}: {resultat[f'variable_decision_{2-i}']}")
 print(bf)

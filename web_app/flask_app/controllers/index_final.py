@@ -96,7 +96,7 @@ def simplex(c, A, b,z):
     for i in range(n):
         solution[f'variable_decision_{i+1}'] = variables_decision[i]
     if(z=="max"):
-        solution['valeur_objectif']=-solution['valeur_objectif']
+        solution['valeur_objectif']=abs(solution['valeur_objectif'])
     bf=premier_member(A,solution['tableau_simplexe'])
     return solution,bf 
 

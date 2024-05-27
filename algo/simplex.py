@@ -1,64 +1,5 @@
-from flask_app import app
-from flask import render_template,redirect,request,session
 import heapq
 import numpy as np
-
-app.secret_key="session_solver"
-
-@app.route("/")
-def index():
-    # data={
-    #     "a": {"x":[-1,1,1],"y":[4,-1,1]},
-    #     "b":[160,30,80],
-    #     "c":[20.00,60.00],
-    #     "z":3520.00,
-    #     "symb":["<=","<=","<="],
-    #     "res":{"x":32,"y":48}
-    # }
-    return render_template("index.html")
-
-@app.route("/solve", methods=["POST"])
-def solver():
-    data={
-        "a":{"x":[
-            request.form["ax0"],
-            request.form["ax1"],
-            request.form["ax2"]
-        ],
-        "y":[
-            request.form["ay0"],
-            request.form["ay1"],
-            request.form["ay2"]
-        ]},
-        "b":[
-            request.form["b0"],
-            request.form["b1"],
-            request.form["b2"]
-        ],
-        "c":[
-            request.form["c0"],
-            request.form["c1"]
-        ],
-        "symb":[
-            request.form["symb0"],
-            request.form["symb1"],
-            request.form["symb2"]
-        ]
-    }
-    # keep the data in the session so it will reappear with the routing
-    session["data"]=data
-    return redirect("/result")
-
-@app.route("/result")
-def result():
-    s,v=solve_it(session["data"])
-    res=[]
-    for variable, value in s:
-        print(f"x[{variable}] = {value}")
-        res.append(round(value))
-    
-    return render_template("result.html",data=session["data"],res=res,z=round(v))
-
 
 def simplex(c, A, b,z):
     m, n = A.shape
@@ -98,7 +39,12 @@ def simplex(c, A, b,z):
     return solution
 
 def convert_standard_pl(c,A,b,z,op):
-  if z == "min":
+  c = np.array([c[0], c[1]])  # Coefficients de la fonction objectif
+  A = np.array([A[0], A[1], A[2]])  # Coefficients des contraintes
+  b = np.array([b[0],b[1],[2]]) 
+  if z == "max":
+        return A, b, c
+  else:
         c = -c  # Inverser les coefficients de la fonction objectif pour la minimisation
   for i in range(3):
         if op[i] == ">=" or op[i] == ">":
@@ -106,5 +52,16 @@ def convert_standard_pl(c,A,b,z,op):
             b[i] = -b[i]  # Inverser les valeurs des contraintes
   return A,b,c
 
-
-
+  
+# Exemple d'utilisation
+z = "min"
+op=["<=",">=","<="]
+c = np.array([-2, -3])  # Coefficients de la fonction objectif
+A = np.array([[1,6], [-2,-2], [4,1]])  # Coefficients des contraintes
+b = np.array([30, -15, 24])  # Valeurs des contraintes
+A,b,c=convert_standard_pl(c,A,b,z,op)
+resultat = simplex(c, A, b,z)
+print("Solution optimale:")
+print("Valeur de la fonction objectif:", resultat['valeur_objectif'])
+for i in range(2):
+    print(f"Valeur de la variable de décision {i+1}: {resultat[f'variable_decision_{2-i}']}")

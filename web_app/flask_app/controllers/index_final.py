@@ -39,7 +39,7 @@ def solver():
             float(request.form["c0"]),
             float(request.form["c1"])
         ],
-        "z":"min",
+        "z":request.form["z"],
         "symb":[
             request.form["symb0"],
             request.form["symb1"],
@@ -48,23 +48,19 @@ def solver():
     }
     # keep the data in the session so it will reappear with the routing
     session["data"]=data
+    print(session["data"]["z"])
     return redirect("/result")
 
 @app.route("/result")
 def result():
     A,b,c=convert_standard_pl(session["data"]["c"],session["data"]["a"],session["data"]["b"],session["data"]["z"],session["data"]["symb"])
     res=[]
-    resultat = simplex(c, A, b,session["data"]["z"].lower())
+    result,bf = simplex(c, A, b,session["data"]["z"])
     for i in range(2):
-        res.append(resultat[f'variable_decision_{2-i}'])
-    v=resultat['valeur_objectif']
-    # if(z=="max"):
-    #   solution['valeur_objectif']=-solution['valeur_objectif']
-    # for variable, value in s:
-    #     print(f"x[{variable}] = {value}")
-    #     res.append(round(value))
+        res.append("%.2f" % float(result[f'variable_decision_{2-i}']))
+    v=result['valeur_objectif']
     
-    return render_template("result.html",data=session["data"],res=res,z=float(v))
+    return render_template("result.html",data=session["data"],res=res,z="%.2f" % float(v),premier_member=bf)
 
 
 def simplex(c, A, b,z):
@@ -73,7 +69,6 @@ def simplex(c, A, b,z):
     tableau[:-1, :-1] = np.hstack((A, np.eye(m)))
     tableau[:-1, -1] = b
     # Ajustement de la dimension de c ici
-    
     c_adjusted = np.zeros(n+m)
     c_adjusted[:len(c)] = -c
     tableau[-1, :-1] = c_adjusted
@@ -95,27 +90,37 @@ def simplex(c, A, b,z):
     
     variables_decision = tableau[:-1, -1]
     solution = {
-      'valeur_objectif': tableau[-1, -1],
-      'tableau_simplexe': tableau
+        'valeur_objectif': tableau[-1, -1],
+        'tableau_simplexe': tableau
     }
     for i in range(n):
         solution[f'variable_decision_{i+1}'] = variables_decision[i]
     if(z=="max"):
-      solution['valeur_objectif']=solution['valeur_objectif']
-    
-    return solution
+        solution['valeur_objectif']=-solution['valeur_objectif']
+    bf=premier_member(A,solution['tableau_simplexe'])
+    return solution,bf 
 
 def convert_standard_pl(c,A,b,z,op):
-  c = np.array([c[0], c[1]])  # Coefficients de la fonction objectif
-  A = np.array([A[0], A[1], A[2]])  # Coefficients des contraintes
-  b = np.array([b[0],b[1],b[2]]) 
-  if z == "min":
+    c = np.array([c[0], c[1]])  # Coefficients de la fonction objectif
+    A = np.array([A[0], A[1], A[2]])  # Coefficients des contraintes
+    b = np.array([b[0],b[1],b[2]]) 
+    if z == "min":
         c = -c  # Inverser les coefficients de la fonction objectif pour la minimisation
-  for i in range(3):
+    for i in range(3):
         if op[i] == ">=" or op[i] == ">":
             A[i, :] = -A[i, :]  # Inverser les coefficients des contraintes
             b[i] = -b[i]  # Inverser les valeurs des contraintes
-  return A,b,c
+    return A,b,c
+
+def premier_member(A, tableau):
+    m, n = A.shape
+    T = tableau[:-1, -1][::-1] 
+    T = [T[1],T[2]] 
+    bf = np.zeros(m)
+    print(T)
+    for i in range(m):
+        bf[i] ="%.2f" % float(np.dot(A[i, :], T[:n]))
+    return bf
 
 
 

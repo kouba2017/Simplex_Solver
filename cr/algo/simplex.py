@@ -81,7 +81,7 @@ def objectiveValue(tableau):
    return -(tableau[-1][-1])
 
 
-def canImprove(tableau):
+def canImprove(tableau): 
    lastRow = tableau[-1]
    return any(x > 0 for x in lastRow[:-1])
 
